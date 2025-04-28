@@ -1,0 +1,12 @@
+fastapi[standard]
+uvicorn
+sqlalchemy
+psycopg2
+passlib[bcrypt]
+fastapi-jwt-auth[asymmetric]
+alembic==1.13.1
+pytest==7.4.4
+python-jose==3.3.0
+python-jose[cryptography]
+psycopg2
+pydantic-settings

@@ -33,6 +33,17 @@ class LoginUser(BaseModel):
     password: str = Field(min_length=8, max_length=128)
 
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    id: int
+    email: EmailStr
+    role: UserRole = Field(default=UserRole.PATIENT)
+
+
 class CreateDoctorProfile(BaseModel):
     user_id: int
     specialization: str

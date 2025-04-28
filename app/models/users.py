@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy import JSON, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import JSON, TIMESTAMP, Column, Integer, String, DateTime, ForeignKey, text
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
@@ -13,8 +13,8 @@ class User(Base):
     full_name = Column(String)
     hashed_password = Column(String)
     role = Column(String, default="patient") 
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
+    updated_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"), onupdate=datetime.datetime.utcnow)
 
 class DoctorProfile(Base):
     __tablename__ = "doctor_profiles"
@@ -25,7 +25,5 @@ class DoctorProfile(Base):
     experience_years = Column(Integer)
     academic_history = Column(JSON)  
     bio = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-   
+
     user = relationship("User", back_populates="doctor_profile")

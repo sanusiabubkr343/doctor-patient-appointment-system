@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.database import engine, Base
-from app.routers import users
+from app.routers import users, appointments
 
 app = FastAPI(
     title="La Hospital",
@@ -29,6 +29,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(users.router)
+app.include_router(appointments.router)
 
 
 @app.get("/")

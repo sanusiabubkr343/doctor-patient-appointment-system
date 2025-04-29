@@ -20,7 +20,6 @@ async def get_auth_user(
 
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        print(payload)
         user_id = payload.get("sub")
         if user_id is None:
             raise  HTTPException(

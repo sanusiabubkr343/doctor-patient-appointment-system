@@ -58,3 +58,9 @@ docker run -p 8000:8000 --env-file .env doctor-patient-appointment-system
 ```
 
 The application will be accessible at: [http://127.0.0.1:8000/api/v1/docs#/](http://127.0.0.1:8000/api/v1/docs#/)
+
+## API Documentation Preview
+
+![image](https://github.com/user-attachments/assets/67a419c2-f9d7-420a-b1bc-ac09ddbd2909)
+
+This image provides a preview of how the API documentation (Swagger UI) looks.

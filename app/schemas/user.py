@@ -11,15 +11,14 @@ class UserRole(str,enum.Enum):
 
 
 class UserBase(BaseModel):
-    id: int
     email: EmailStr
     full_name: str = Field(max_length=225)
-    password: str = Field(min_length=8, max_length=128, exclude=True)
-    role: UserRole = Field(default=UserRole.PATIENT)
+    role: UserRole
 
 
 class CreateUser(UserBase):
-    pass
+    password: str = Field(min_length=8, max_length=128, exclude=True)
+
 
 class UpdateUser(BaseModel):
     email: Optional[EmailStr] = None
@@ -45,7 +44,7 @@ class TokenData(BaseModel):
 
 
 class CreateDoctorProfile(BaseModel):
-    user_id: int
+
     specialization: str
     experience_years: int
     academic_history: dict  # Assuming this is a JSON field
@@ -75,9 +74,8 @@ class UserResponse(BaseModel):
     id:int
     email: EmailStr 
     full_name: str = Field(max_length=225)
-    password:str = Field(min_length=8, max_length=128,exclude=True)
     role: UserRole = Field(default=UserRole.PATIENT)  
-    doctor_profile: Optional["DoctorProfileResponse"] = None   
+    doctor_profile: DoctorProfileResponse | None = None
     created_at: datetime 
     updated_at: datetime 
 

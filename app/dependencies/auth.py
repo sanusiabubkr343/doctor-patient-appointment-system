@@ -17,12 +17,11 @@ async def get_token(auth_header: Annotated[str, Header(example="Bearer access-to
 async def get_auth_user(
     token: str = Depends(get_token), db: Session = Depends(get_db)
 ) -> User:
-    
 
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         print(payload)
-        user_id: str = payload.get("sub")
+        user_id = payload.get("sub")
         if user_id is None:
             raise  HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,

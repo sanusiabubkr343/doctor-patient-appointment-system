@@ -3,6 +3,7 @@ uvicorn
 sqlalchemy
 psycopg2
 passlib[bcrypt]
+bcrypt==3.2.0
 fastapi-jwt-auth[asymmetric]
 alembic==1.13.1
 pytest==7.4.4

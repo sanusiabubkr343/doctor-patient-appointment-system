@@ -16,6 +16,8 @@ class User(Base):
     created_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"))
     updated_at = Column(TIMESTAMP(timezone=True), server_default=text("now()"), onupdate=datetime.datetime.utcnow)
 
+    doctor_profile = relationship("DoctorProfile", back_populates="user", uselist=False)
+
 class DoctorProfile(Base):
     __tablename__ = "doctor_profiles"
 

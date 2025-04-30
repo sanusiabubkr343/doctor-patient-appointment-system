@@ -28,7 +28,7 @@ router = APIRouter(
 )
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
 async def login(form_data: LoginUser, db: Session = Depends(get_db)):
     user = db.query(User).filter_by(email=form_data.email).first()
     if not user or not verify_password(form_data.password, user.hashed_password):
@@ -45,7 +45,7 @@ async def login(form_data: LoginUser, db: Session = Depends(get_db)):
     return {"access_token": access_token, "token_type": "Bearer"}
 
 
-@router.post("/register", response_model=UserResponse)
+@router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register_user(user: Annotated[CreateUser, Form()], db: Session = Depends(get_db)):
     existing_user = db.query(User).filter_by(email=user.email).first()
     if existing_user:
@@ -67,7 +67,9 @@ async def register_user(user: Annotated[CreateUser, Form()], db: Session = Depen
     return new_user
 
 
-@router.post("/doctor_profile", response_model=DoctorProfileResponse)
+@router.post(
+    "/doctor_profile", response_model=DoctorProfileResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_doctor_profile(
     profile: CreateDoctorProfile,
     is_doctor: bool = Depends(is_doctor),
@@ -87,7 +89,7 @@ async def create_doctor_profile(
     return doctor_profile
 
 
-@router.put("/doctor_profile", response_model=DoctorProfileResponse)
+@router.put("/doctor_profile", response_model=DoctorProfileResponse, status_code=status.HTTP_200_OK)
 async def update_doctor_profile(
     profile: UpdateDoctorProfile,
     is_doctor: bool = Depends(is_doctor),
@@ -108,7 +110,7 @@ async def update_doctor_profile(
     return doctor_profile
 
 
-@router.get("/{user_id}", response_model=UserResponse)
+@router.get("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
 async def get_user(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).get(user_id)
     if not user:
@@ -131,7 +133,7 @@ async def delete_user(user_id: int, db: Session = Depends(get_db)):
     db.commit()
 
 
-@router.get("/", response_model=list[UserResponse])
+@router.get("/", response_model=list[UserResponse], status_code=status.HTTP_200_OK)
 async def get_all_users(
     db: Session = Depends(get_db),
     is_authenticated: User = Depends(get_auth_user),

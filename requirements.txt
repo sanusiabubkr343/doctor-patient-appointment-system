@@ -12,3 +12,5 @@ python-jose[cryptography]
 psycopg2-binary
 psycopg2
 pydantic-settings
+factory-boy
+pytest-mock

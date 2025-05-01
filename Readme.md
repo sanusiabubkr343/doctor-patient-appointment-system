@@ -31,36 +31,31 @@ Access the API documentation at: [API Docs](http://127.0.0.1:8000/api/v1/docs#/)
 Follow the instructions in the API documentation to interact with the system.
 
 
-## How to Start the Application
-
-1. **Create a `.env` File**  
-  Create a `.env` file in the root directory of the project with the following sample content:
-  ```env
-  DATABASE_URL=postgresql://user:password@localhost:5432/doctor_patient_db
-  SECRET_KEY=your_secret_key
-  DEBUG=True
-  ```
 
 ## How to Run the Docker File
 
-2. **Build and Run the Docker Container**
+1. **Create a `.env` File**  
+  Copy the content of `.env.sample` into a new `.env` file in the root directory of the project.
 
-### Step 1: Build the Docker Image
-Run the following command to build the Docker image:
-```bash
-docker build -t doctor-patient-appointment-system .
-```
+2. **Run the Application**  
+  Use the following command to start the application:
+  ```bash
+  docker-compose up --build
+  ```
 
-### Step 2: Run the Docker Container
-Run the Docker container, passing environment variables from the `.env` file:
-```bash
-docker run -p 8000:8000 --env-file .env doctor-patient-appointment-system
-```
-
-The application will be accessible at: [http://127.0.0.1:8000/api/v1/docs#/](http://127.0.0.1:8000/api/v1/docs#/)
+3. **Access the API Documentation**  
+  Once the application is running, open your browser and navigate to [http://0.0.0.0:8000/api/v1/docs/](http://0.0.0.0:8000/api/v1/docs/) to use the Swagger UI.
 
 ## API Documentation Preview
 
 ![image](https://github.com/user-attachments/assets/67a419c2-f9d7-420a-b1bc-ac09ddbd2909)
 
 This image provides a preview of how the API documentation (Swagger UI) looks.
+
+## Running Tests
+
+To run the tests for the application, use the following command:
+
+```bash
+docker-compose -f docker-compose.yml run web -c "pytest -vv"
+```

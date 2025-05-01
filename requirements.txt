@@ -1,7 +1,6 @@
 fastapi[standard]
 uvicorn
-sqlalchemy
-psycopg2
+sqlalchemy==2.0.40
 passlib[bcrypt]
 bcrypt==3.2.0
 fastapi-jwt-auth[asymmetric]
@@ -9,8 +8,9 @@ alembic==1.13.1
 pytest==7.4.4
 python-jose==3.3.0
 python-jose[cryptography]
-psycopg2-binary
+psycopg2-binary==2.9.10
 psycopg2
 pydantic-settings
 factory-boy
 pytest-mock
+python-dotenv>=1.0.0

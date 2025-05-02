@@ -59,3 +59,8 @@ To run the tests for the application, use the following command:
 ```bash
 docker-compose -f docker-compose.yml run web -c "pytest -vv"
 ```
+## Test Results Preview
+
+![image](https://github.com/user-attachments/assets/789ea20c-ec6d-40e3-8b38-29c1d908d002)
+
+This image provides a preview of the test results when running `pytest`.

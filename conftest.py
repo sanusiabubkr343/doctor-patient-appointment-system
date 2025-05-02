@@ -91,34 +91,37 @@ def mock_authenticated_user(db):
 
         if role == "admin":
             user_data = user_factory.create(
-                db,  # Pass the actual db session here
-                email=f"{role}@app.com",
+                db,
+                email=f"{role}_{user_factory.autogeneterate_email()}@app.com",
                 full_name=f"{role.capitalize()} User",
                 role=role,
             )
 
         elif role == "doctor":
             user_data = user_factory.create(
-                db,  # Pass the actual db session here
-                email=f"{role}@app.com",
+                db,
+                email=f"{role}_{user_factory.autogeneterate_email()}@app.com",
                 full_name=f"{role.capitalize()} User",
                 role="doctor",
             )
         elif role == "patient":
             user_data = user_factory.create(
-                db,  # Pass the actual db session here
-                email=f"{role}@app.com",
+                db,
+                email=f"{role}_{user_factory.autogeneterate_email()}@app.com",
                 full_name=f"{role.capitalize()} User",
                 role="patient",
             )
 
-        return create_access_token(
-            data={
-                "sub": str(user_data.id),
-                "email": user_data.email,
-                "role": user_data.role,
-            },
-            expires_delta=timedelta(minutes=15),
+        return (
+            create_access_token(
+                data={
+                    "sub": str(user_data.id),
+                    "email": user_data.email,
+                    "role": user_data.role,
+                },
+                expires_delta=timedelta(minutes=15),
+            ),
+            user_data,
         )
 
     return _user

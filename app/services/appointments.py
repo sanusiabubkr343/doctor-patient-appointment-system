@@ -124,16 +124,7 @@ class AppointmentService:
             }
         )
 
-    @staticmethod
-    def get_all_time_slots(db: Session) -> List[AvailableTimeSlotResponse]:
-        """Get all available time slots."""
-        time_slots = db.query(AvailableTimeSlot).order_by(AvailableTimeSlot.created_at.desc()).all()
-        return [
-            AvailableTimeSlotResponse.model_validate(time_slot).model_copy(
-                update={"doctor_name": time_slot.doctor.full_name if time_slot.doctor else None}
-            )
-            for time_slot in time_slots
-        ]
+   
 
     @staticmethod
     def create_appointment(
@@ -239,32 +230,6 @@ class AppointmentService:
             }
         )
 
-    @staticmethod
-    def get_all_appointments(
-        db: Session, user_id: int, user_role: str
-    ) -> List[AppointmentResponse]:
-        """Get all appointments based on user role."""
-        if user_role == "admin":
-            appointments = db.query(Appointment).all()
-        elif user_role == "doctor":
-            appointments = db.query(Appointment).filter_by(doctor_id=user_id).all()
-        elif user_role == "patient":
-            appointments = db.query(Appointment).filter_by(patient_id=user_id).all()
-        else:
-            raise HTTPException(
-                status_code=403,
-                detail="You do not have permission to view appointments.",
-            )
-
-        return [
-            AppointmentResponse.model_validate(appointment).model_copy(
-                update={
-                    "patient_name": appointment.patient.full_name if appointment.patient else None,
-                    "doctor_name": appointment.doctor.full_name if appointment.doctor else None,
-                }
-            )
-            for appointment in appointments
-        ]
 
     @staticmethod
     def get_appointment(db: Session, appointment_id: int) -> ApointmentDetail:
@@ -276,3 +241,71 @@ class AppointmentService:
                 detail="Appointment not found",
             )
         return appointment
+    
+    
+    @staticmethod
+    def get_all_time_slots(
+        db: Session,
+        skip: int = 0,
+        limit: int = 10,
+        sort_order: str = "asc"
+    ) -> List[AvailableTimeSlotResponse]:
+        """Get all available time slots with pagination."""
+        query = db.query(AvailableTimeSlot)
+
+        # Apply sorting
+        if sort_order == "asc":
+            query = query.order_by(AvailableTimeSlot.created_at.asc())
+        else:
+            query = query.order_by(AvailableTimeSlot.created_at.desc())
+
+        # Apply pagination
+        time_slots = query.offset(skip).limit(limit).all()
+
+        return [
+            AvailableTimeSlotResponse.model_validate(time_slot).model_copy(
+                update={"doctor_name": time_slot.doctor.full_name if time_slot.doctor else None}
+            )
+            for time_slot in time_slots
+        ]
+
+    @staticmethod
+    def get_all_appointments(
+        db: Session,
+        user_id: int,
+        user_role: str,
+        skip: int = 0,
+        limit: int = 10,
+        sort_order: str = "asc"
+    ) -> List[AppointmentResponse]:
+        """Get all appointments based on user role with pagination."""
+        if user_role == "admin":
+            query = db.query(Appointment)
+        elif user_role == "doctor":
+            query = db.query(Appointment).filter_by(doctor_id=user_id)
+        elif user_role == "patient":
+            query = db.query(Appointment).filter_by(patient_id=user_id)
+        else:
+            raise HTTPException(
+                status_code=403,
+                detail="You do not have permission to view appointments.",
+            )
+
+        # Apply sorting
+        if sort_order == "asc":
+            query = query.order_by(Appointment.created_at.asc())
+        else:
+            query = query.order_by(Appointment.created_at.desc())
+
+        # Apply pagination
+        appointments = query.offset(skip).limit(limit).all()
+
+        return [
+            AppointmentResponse.model_validate(appointment).model_copy(
+                update={
+                    "patient_name": appointment.patient.full_name if appointment.patient else None,
+                    "doctor_name": appointment.doctor.full_name if appointment.doctor else None,
+                }
+            )
+            for appointment in appointments
+        ]

@@ -1,6 +1,7 @@
 # app/routers/appointments.py
 
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.dependencies.auth import get_auth_user
@@ -61,8 +62,11 @@ async def update_time_slot(
 async def get_all_time_slots(
     auth_user: User = Depends(get_auth_user),
     db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    sort_order: Optional[str] = Query("asc", regex="^(asc|desc)$"),
 ):
-    return AppointmentService.get_all_time_slots(db)
+    return AppointmentService.get_all_time_slots(db, skip=skip, limit=limit, sort_order=sort_order)
 
 
 @router.post("/book-appointment", response_model=AppointmentResponse)
@@ -98,8 +102,13 @@ async def cancel_appointment(
 async def get_all_appointments(
     auth_user: User = Depends(get_auth_user),
     db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1),
+    sort_order: Optional[str] = Query("asc", regex="^(asc|desc)$"),
 ):
-    return AppointmentService.get_all_appointments(db, auth_user.id, auth_user.role)
+    return AppointmentService.get_all_appointments(
+        db, auth_user.id, auth_user.role, skip, limit, sort_order
+    )
 
 
 @router.get("/get-appointment/{appointment_id}", response_model=ApointmentDetail)

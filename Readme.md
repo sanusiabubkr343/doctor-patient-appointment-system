@@ -65,5 +65,7 @@ docker-compose -f docker-compose.yml run web -c "pytest -vv"
 This image provides a preview of the test results when running `pytest`.
 
 ![image](https://github.com/user-attachments/assets/789ea20c-ec6d-40e3-8b38-29c1d908d002)
-![image](https://github.com/user-attachments/assets/67a419c2-f9d7-420a-b1bc-ac09ddbd2909)
+![image](https://github.com/user-attachments/assets/67a419c2-f9d7-420a-b1bc-ac09ddbd2909)![Screenshot 2025-05-02 165601](https://github.com/user-attachments/assets/e2e83741-8aa3-4867-bc16-8b663e2c815e)
+![Screenshot 2025-04-30 000134](https://github.com/user-attachments/assets/df781ca1-b648-4dec-9557-21d86eb98953)
+
 

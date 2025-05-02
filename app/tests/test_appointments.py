@@ -1,11 +1,22 @@
 import pytest
 
 
-@pytest.mark.parametrize("role", ["patient", "doctor", "admin"])
-def test_time_slot_creation(mocked_authentication, client, role):
+@pytest.mark.parametrize(
+    "role, expected_status",
+    [
+        ("doctor", 201),
+        ("patient", 403),
+        ("admin", 403),
+    ],
+)
+def test_time_slot_creation(client, mock_authenticated_user, role, expected_status):
     """Test time slot creation permissions based on user roles."""
-    print(auth_client, auth_client[1])
-    auth_client, = mocked_authentication(role, client)
+    token = mock_authenticated_user(role=role)
+
+    # Set the correct authorization header
+    client.headers.update({"auth-header": f"Bearer {token}"})
+
     payload = {"start_time": "2025-05-02T10:00:00Z", "end_time": "2025-05-02T11:00:00Z"}
-    response = auth_client.post("/create-time-slot", json=payload)
-    assert response.status_code == (201 if role == "doctor" else 403)  # 
+    response = client.post("/appointments/create-time-slot", json=payload)
+
+    assert response.status_code == expected_status

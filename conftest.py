@@ -7,8 +7,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from urllib.parse import urlparse
 import psycopg2
-import copy
+import pytest
+from copy import deepcopy
+from datetime import timedelta
 
+from app.tests.factories import UserFactory
 from app.utils.auth import create_access_token
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -55,12 +58,15 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 @pytest.fixture(scope="function")
 def db():
     Base.metadata.create_all(bind=engine)
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-        Base.metadata.drop_all(bind=engine)
+    connection = engine.connect()
+    transaction = connection.begin()
+    db = TestingSessionLocal(bind=connection)
+
+    yield db
+
+    transaction.rollback()
+    connection.close()
+    Base.metadata.drop_all(bind=engine)
 
 
 # Fixture to provide a test client with the overridden DB session
@@ -76,46 +82,51 @@ def client(db):
     yield TestClient(app)
 
 
-# Example user data fixture (customize as needed)
 @pytest.fixture()
-def user_data():
-    return {
-        "id": 1,
-        "email": "user@example.com",
-        "full_name": "Test User",
-        "role": "patient",
-    }
+def mock_authenticated_user(db):
+    """Mock authenticated user with specified role for testing."""
 
+    def _user(role: str):
+        user_factory = UserFactory()
 
-@pytest.fixture
-def mocked_authentication(user_data):
-    """Factory fixture to create authenticated clients for different roles"""
-
-    def _get_authenticated_client(role: str, client: TestClient):
-        # Create a copy of user_data to avoid modifying the original
-        user = copy.deepcopy(user_data)
-        user["role"] = role
-
-        # Customize user data based on role
         if role == "admin":
-            user.update({"full_name": "Admin User", "email": "admin@app.com"})
-        elif role == "doctor":
-            user.update({"full_name": "Doctor User", "email": "doctor@app.com"})
+            user_data = user_factory.create(
+                db,  # Pass the actual db session here
+                email=f"{role}@app.com",
+                full_name=f"{role.capitalize()} User",
+                role=role,
+            )
 
-        # Create access token
-        access_token = create_access_token(
+        elif role == "doctor":
+            user_data = user_factory.create(
+                db,  # Pass the actual db session here
+                email=f"{role}@app.com",
+                full_name=f"{role.capitalize()} User",
+                role="doctor",
+            )
+        elif role == "patient":
+            user_data = user_factory.create(
+                db,  # Pass the actual db session here
+                email=f"{role}@app.com",
+                full_name=f"{role.capitalize()} User",
+                role="patient",
+            )
+
+        return create_access_token(
             data={
-                "sub": str(user["id"]),
-                "email": user["email"],
-                "role": user["role"],
+                "sub": str(user_data.id),
+                "email": user_data.email,
+                "role": user_data.role,
             },
             expires_delta=timedelta(minutes=15),
         )
 
-        # Create a copy of the client to avoid modifying the original
-        auth_client = copy.deepcopy(client)
-        auth_client.headers.update({"Authorization": f"Bearer {access_token}"})
+    return _user
 
-        return auth_client, user
 
-    return _get_authenticated_client
+# Authenticated test client fixture
+@pytest.fixture
+def client_with_auth(client, mock_authenticated_user):
+    """Test client with authentication headers."""
+    client.headers.update({"auth-header": f"Bearer {mock_authenticated_user}"})
+    return client

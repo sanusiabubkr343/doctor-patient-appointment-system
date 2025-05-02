@@ -14,6 +14,8 @@ from app.schemas.appointment import (
     AvailableTimeSlotResponse,
     CreateAppointment,
 )
+from fastapi import status
+
 from app.services.appointments import AppointmentService
 
 router = APIRouter(
@@ -22,7 +24,11 @@ router = APIRouter(
 )
 
 
-@router.post("/create-time-slot", response_model=AvailableTimeSlotResponse)
+@router.post(
+    "/create-time-slot",
+    response_model=AvailableTimeSlotResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_time_slot(
     time_slot: AvailableTimeSlotCreate,
     current_user: User = Depends(is_doctor),
@@ -31,7 +37,11 @@ async def create_time_slot(
     return AppointmentService.create_time_slot(db, current_user.id, time_slot)
 
 
-@router.get("/get-time-slot/{time_slot_id}", response_model=AvailableTimeSlotResponse)
+@router.get(
+    "/get-time-slot/{time_slot_id}",
+    response_model=AvailableTimeSlotResponse,
+    status_code=status.HTTP_200_OK,
+)
 async def get_time_slot(
     time_slot_id: int,
     db: Session = Depends(get_db),
@@ -39,7 +49,7 @@ async def get_time_slot(
     return AppointmentService.get_time_slot(db, time_slot_id)
 
 
-@router.delete("/delete-time-slot/{time_slot_id}", status_code=204)
+@router.delete("/delete-time-slot/{time_slot_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_time_slot(
     time_slot_id: int,
     current_user: User = Depends(is_doctor),
@@ -48,7 +58,7 @@ async def delete_time_slot(
     AppointmentService.delete_time_slot(db, time_slot_id, current_user.id)
 
 
-@router.put("/update-time-slot/{time_slot_id}", response_model=AvailableTimeSlotResponse)
+@router.put("/update-time-slot/{time_slot_id}", response_model=AvailableTimeSlotResponse, status_code=status.HTTP_200_OK)
 async def update_time_slot(
     time_slot_id: int,
     time_slot: AvailableTimeSlotCreate,
@@ -58,7 +68,7 @@ async def update_time_slot(
     return AppointmentService.update_time_slot(db, time_slot_id, current_user.id, time_slot)
 
 
-@router.get("/get-all-time-slots", response_model=list[AvailableTimeSlotResponse])
+@router.get("/get-all-time-slots", response_model=list[AvailableTimeSlotResponse], status_code=status.HTTP_200_OK)
 async def get_all_time_slots(
     auth_user: User = Depends(get_auth_user),
     db: Session = Depends(get_db),
@@ -69,7 +79,9 @@ async def get_all_time_slots(
     return AppointmentService.get_all_time_slots(db, skip=skip, limit=limit, sort_order=sort_order)
 
 
-@router.post("/book-appointment", response_model=AppointmentResponse)
+@router.post(
+    "/book-appointment", response_model=AppointmentResponse, status_code=status.HTTP_201_CREATED
+)
 async def create_appointment(
     appointment: CreateAppointment,
     current_user: User = Depends(is_patient),
@@ -78,7 +90,11 @@ async def create_appointment(
     return AppointmentService.create_appointment(db, current_user.id, appointment)
 
 
-@router.post("/complete-appointment/{appointment_id}", response_model=AppointmentResponse)
+@router.post(
+    "/complete-appointment/{appointment_id}",
+    response_model=AppointmentResponse,
+    status_code=status.HTTP_200_OK,
+)
 async def complete_appointment(
     appointment_id: int,
     current_user: User = Depends(is_doctor),
@@ -87,7 +103,11 @@ async def complete_appointment(
     return AppointmentService.complete_appointment(db, appointment_id, current_user.id)
 
 
-@router.post("/cancel-appointment/{appointment_id}", response_model=AppointmentResponse)
+@router.post(
+    "/cancel-appointment/{appointment_id}",
+    response_model=AppointmentResponse,
+    status_code=status.HTTP_200_OK,
+)
 async def cancel_appointment(
     appointment_id: int,
     current_user: User = Depends(is_patient_or_doctor),
@@ -98,7 +118,11 @@ async def cancel_appointment(
     )
 
 
-@router.get("/get-all-appointments", response_model=list[AppointmentResponse])
+@router.get(
+    "/get-all-appointments",
+    response_model=list[AppointmentResponse],
+    status_code=status.HTTP_200_OK,
+)
 async def get_all_appointments(
     auth_user: User = Depends(get_auth_user),
     db: Session = Depends(get_db),
@@ -111,7 +135,11 @@ async def get_all_appointments(
     )
 
 
-@router.get("/get-appointment/{appointment_id}", response_model=ApointmentDetail)
+@router.get(
+    "/get-appointment/{appointment_id}",
+    response_model=ApointmentDetail,
+    status_code=status.HTTP_200_OK,
+)
 async def get_appointment(
     appointment_id: int,
     auth_user: User = Depends(get_auth_user),

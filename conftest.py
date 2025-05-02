@@ -1,3 +1,4 @@
+from datetime import timedelta
 import sys
 from pathlib import Path
 import pytest
@@ -6,6 +7,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from urllib.parse import urlparse
 import psycopg2
+import copy
+
+from app.utils.auth import create_access_token
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -81,3 +85,37 @@ def user_data():
         "full_name": "Test User",
         "role": "patient",
     }
+
+
+@pytest.fixture
+def mocked_authentication(user_data):
+    """Factory fixture to create authenticated clients for different roles"""
+
+    def _get_authenticated_client(role: str, client: TestClient):
+        # Create a copy of user_data to avoid modifying the original
+        user = copy.deepcopy(user_data)
+        user["role"] = role
+
+        # Customize user data based on role
+        if role == "admin":
+            user.update({"full_name": "Admin User", "email": "admin@app.com"})
+        elif role == "doctor":
+            user.update({"full_name": "Doctor User", "email": "doctor@app.com"})
+
+        # Create access token
+        access_token = create_access_token(
+            data={
+                "sub": str(user["id"]),
+                "email": user["email"],
+                "role": user["role"],
+            },
+            expires_delta=timedelta(minutes=15),
+        )
+
+        # Create a copy of the client to avoid modifying the original
+        auth_client = copy.deepcopy(client)
+        auth_client.headers.update({"Authorization": f"Bearer {access_token}"})
+
+        return auth_client, user
+
+    return _get_authenticated_client

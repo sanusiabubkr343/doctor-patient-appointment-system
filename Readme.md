@@ -36,6 +36,20 @@ Follow the instructions in the API documentation to interact with the system.
 
 1. **Create a `.env` File**  
   Copy the content of `.env.sample` into a new `.env` file in the root directory of the project.
+  ```plaintext
+  # Web App Environment Variables
+  SECRET_KEY=your-secret-key
+  ALGORITHM=HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES=30
+  DATABASE_URL=postgresql://postgres:postgrespw@db:5432/la-hospital
+
+  # PostgreSQL Environment Variables
+  POSTGRES_USER=postgres
+  POSTGRES_PASSWORD=postgrespw
+  POSTGRES_DB=la-hospital
+  POSTGRES_HOST=db
+  POSTGRES_PORT=5432
+  ```
 
 2. **Run the Application**  
   Use the following command to start the application:

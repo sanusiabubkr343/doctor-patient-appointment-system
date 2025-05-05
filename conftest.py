@@ -16,24 +16,23 @@ from app.utils.auth import create_access_token
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-from app.core.config import settings
 from app.core.database import Base, get_db
 from app.main import app
+import os
 
 # Create a sanitized test DB name from your original DB
-parsed_url = urlparse(settings.DATABASE_URL)
+DATABASE_URL = os.getenv("DATABASE_URL")
+parsed_url = urlparse(DATABASE_URL)
 original_db_name = parsed_url.path[1:]  # remove leading "/"
 safe_test_db_name = f"{original_db_name}_test".replace("-", "_")
 
 # Construct a test database URL using the safe test DB name
-SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL.replace(
-    f"/{original_db_name}", f"/{safe_test_db_name}"
-)
+SQLALCHEMY_DATABASE_URL = DATABASE_URL.replace(f"/{original_db_name}", f"/{safe_test_db_name}")
 
 
 # Create the test DB if it doesn't exist
 def create_test_db():
-    default_url = settings.DATABASE_URL.replace(f"/{original_db_name}", "/postgres")
+    default_url = DATABASE_URL.replace(f"/{original_db_name}", "/postgres")
     conn = psycopg2.connect(default_url)
     conn.autocommit = True
     cur = conn.cursor()

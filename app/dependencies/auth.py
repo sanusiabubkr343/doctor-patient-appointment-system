@@ -1,11 +1,12 @@
 from typing import Annotated
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException, Header,status
-from app.core.config import settings
+from fastapi import Depends, HTTPException, Header, status
 from jose import JWTError, jwt
 from app.core.database import get_db
+import os
 from app.models.users import User
-
+SECRET_KEY = os.environ.get("SECRET_KEY")
+ALGORITHM = os.environ.get("ALGORITHM")
 
 async def get_token(auth_header: Annotated[str, Header(example="Bearer access-token",description="set header as auth-header")]) -> str:
 
@@ -19,7 +20,7 @@ async def get_auth_user(
 ) -> User:
 
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("sub")
         if user_id is None:
             raise  HTTPException(

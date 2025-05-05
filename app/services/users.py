@@ -1,11 +1,11 @@
 # app/services/users.py
 
 from datetime import timedelta
+import os
 from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from app.core.config import settings
 from app.models.users import DoctorProfile, User
 from app.schemas.user import (
     CreateDoctorProfile,
@@ -17,7 +17,7 @@ from app.schemas.user import (
 )
 from app.utils.auth import create_access_token, get_password_hash, verify_password
 from fastapi import HTTPException, status
-
+ACCESS_TOKEN_EXPIRE_MINUTES = float(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 15))
 
 class UserService:
     @staticmethod
@@ -29,7 +29,7 @@ class UserService:
                 detail="Incorrect email or password",
             )
 
-        access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
             data={"sub": str(user.id), "email": user.email, "role": user.role},
             expires_delta=access_token_expires,

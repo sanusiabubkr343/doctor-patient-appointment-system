@@ -2,9 +2,6 @@
 
 This project is a system designed to facilitate the interaction between doctors and patients by enabling appointment scheduling and management.
 
-## API Documentation
-
-Access the API documentation at: [API Docs](http://127.0.0.1:8000/api/v1/docs#/)
 
 ## Features
 
@@ -57,7 +54,9 @@ Follow the instructions in the API documentation to interact with the system.
   docker-compose up --build
   ```
 
-3. **Access the API Documentation**  
+3. **Access the API Documentation**
+4. ## Access the API documentation at: [API Docs](http://127.0.0.1:8000/api/v1/docs#/)
+
   Once the application is running, open your browser and navigate to [http://0.0.0.0:8000/api/v1/docs/](http://0.0.0.0:8000/api/v1/docs/) to use the Swagger UI.
 
 ## API Documentation Preview
@@ -78,3 +77,9 @@ docker-compose -f docker-compose.yml run web -c "pytest -vv"
 ![image](https://github.com/user-attachments/assets/789ea20c-ec6d-40e3-8b38-29c1d908d002)
 
 This image provides a preview of the test results when running `pytest`.
+
+![image](https://github.com/user-attachments/assets/789ea20c-ec6d-40e3-8b38-29c1d908d002)
+![image](https://github.com/user-attachments/assets/67a419c2-f9d7-420a-b1bc-ac09ddbd2909)![Screenshot 2025-05-02 165601](https://github.com/user-attachments/assets/e2e83741-8aa3-4867-bc16-8b663e2c815e)
+![Screenshot 2025-04-30 000134](https://github.com/user-attachments/assets/df781ca1-b648-4dec-9557-21d86eb98953)
+
+

@@ -70,7 +70,7 @@ This image provides a preview of how the API documentation (Swagger UI) looks.
 To run the tests for the application, use the following command:
 
 ```bash
-docker-compose -f docker-compose.yml run web -c "pytest -vv"
+docker-compose exec web pytest -vv
 ```
 ## Test Results Preview
 

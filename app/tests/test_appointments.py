@@ -14,7 +14,7 @@ class TestAppointment:
         """Test time slot creation permissions based on user roles."""
         token, _ = mock_authenticated_user(role=role)
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         payload = {"start_time": "2025-05-02T10:00:00Z", "end_time": "2025-05-02T11:00:00Z"}
         response = client.post("/appointments/create-time-slot", json=payload)
@@ -34,7 +34,7 @@ class TestAppointment:
             end_time="2025-05-02T11:00:00Z",
         )
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
         payload = {"start_time": "2025-05-02T10:00:00Z", "end_time": "2025-05-02T10:30:00Z"}
 
         response = client.post("/appointments/create-time-slot", json=payload)
@@ -45,7 +45,7 @@ class TestAppointment:
         """Test that invalid date formats are rejected."""
         token, _ = mock_authenticated_user(role="doctor")
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         payload = {"start_time": "invalid-date", "end_time": "another-invalid-date"}
         response = client.post("/appointments/create-time-slot", json=payload)
@@ -64,7 +64,7 @@ class TestAppointment:
             end_time="2025-05-02T11:00:00Z",
         )
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         response = client.get(f"/appointments/get-time-slot/{time_slot.id}")
         assert response.status_code == 200
@@ -83,7 +83,7 @@ class TestAppointment:
             end_time="2025-05-02T11:00:00Z",
         )
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         response = client.delete(f"/appointments/delete-time-slot/{time_slot.id}")
         assert response.status_code == 204
@@ -103,7 +103,7 @@ class TestAppointment:
             end_time="2025-05-02T11:00:00Z",
         )
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         payload = {"start_time": "2025-05-02T12:00:00Z", "end_time": "2025-05-02T13:00:00Z"}
         response = client.put(f"/appointments/update-time-slot/{time_slot.id}", json=payload)
@@ -117,7 +117,7 @@ class TestAppointment:
         time_slot_factory = AvailableTimeSlotFactory()
         time_slot_factory.create_batch(db=db, count=5, doctor_id=auth_user.id)
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         response = client.get("/appointments/get-all-time-slots")
         assert response.status_code == 200
@@ -137,7 +137,7 @@ class TestAppointment:
 
         token, _ = mock_authenticated_user(role=role)
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         time_slot_factory = AvailableTimeSlotFactory()
         time_slot = time_slot_factory.create(
@@ -191,7 +191,7 @@ class TestAppointment:
             status="scheduled",
         )
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         response = client.post(f"/appointments/complete-appointment/{appointment.id}")
         assert response.status_code == expected_status
@@ -232,7 +232,7 @@ class TestAppointment:
             status=initial_status,
         )
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         response = client.post(f"/appointments/cancel-appointment/{appointment.id}")
 
@@ -249,7 +249,7 @@ class TestAppointment:
         appointment_factory = AppointmentFactory()
         appointment_factory.create_batch(db=db, count=5, doctor_id=auth_user.id)
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         response = client.get("/appointments/get-all-appointments")
         assert response.status_code == 200
@@ -276,7 +276,7 @@ class TestAppointment:
             status="scheduled",
         )
 
-        client.headers.update({"auth-header": f"Bearer {token}"})
+        client.headers.update({"Authorization": f"Bearer {token}"})
 
         response = client.get(f"/appointments/get-appointment/{appointment.id}")
         assert response.status_code == 200

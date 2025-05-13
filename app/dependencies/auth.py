@@ -8,11 +8,15 @@ from app.models.users import User
 SECRET_KEY = os.environ.get("SECRET_KEY")
 ALGORITHM = os.environ.get("ALGORITHM")
 
-async def get_token(auth_header: Annotated[str, Header(example="Bearer access-token",description="set header as auth-header")]) -> str:
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-    if not auth_header.startswith("Bearer "):
+security = HTTPBearer(auto_error=True)
+
+
+async def get_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    if credentials.scheme.lower() != "bearer":
         raise HTTPException(status_code=401, detail="Invalid auth scheme")
-    return auth_header.split(" ")[1]
+    return credentials.credentials
 
 
 async def get_auth_user(

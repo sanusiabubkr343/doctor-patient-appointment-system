@@ -130,5 +130,5 @@ def mock_authenticated_user(db):
 @pytest.fixture
 def client_with_auth(client, mock_authenticated_user):
     """Test client with authentication headers."""
-    client.headers.update({"auth-header": f"Bearer {mock_authenticated_user}"})
+    client.headers.update({"Authorization": f"Bearer {mock_authenticated_user}"})
     return client
